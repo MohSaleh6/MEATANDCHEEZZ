@@ -1,6 +1,6 @@
 // Meat & Cheezz — customer site
 // Vanilla JS, no dependencies. Arabic-first, RTL-aware.
-import { DICT, QUOTES } from './i18n.js?v=911b3cc597';
+import { DICT, QUOTES } from './i18n.js?v=a5b0e4f95a';
 
 /* ════════════════════════ utilities ════════════════════════ */
 const $ = (s, r = document) => r.querySelector(s);
@@ -295,12 +295,19 @@ function renderMenu() {
   if ($('#search').value) runSearch();
 }
 
+const BRANCH_PHOTOS = { abdoun: '/img/branches/abdoun', mecca: '/img/branches/mecca' };
+const branchPhoto = (b) => {
+  const base = BRANCH_PHOTOS[b.id];
+  if (!base) return '';
+  return `<figure class="bcard__photo"><img src="${base}-800.webp" srcset="${base}-480.webp 480w, ${base}-800.webp 800w" sizes="(min-width: 900px) 520px, 92vw" alt="${esc(t('branchPhoto', { b: L(b, 'name') }))}" width="800" height="500" loading="lazy" decoding="async"></figure>`;
+};
 function renderBranches() {
   const wrap = $('#branchCards');
   wrap.innerHTML = Object.values(S.branches).map((b) => {
     const st = branchStatus(b);
     const waText = encodeURIComponent(t('waHi'));
     return `<article class="bcard reveal${S.branchId === b.id ? ' is-selected' : ''}${mapBranch === b.id ? ' is-mapped' : ''}" data-map="${esc(b.id)}">
+      ${branchPhoto(b)}
       <div class="bcard__top">
         <div><h3>${esc(L(b, 'name'))}</h3><p class="bcard__addr">${esc(L(b, 'address'))}</p></div>
         <span class="status${st.open ? '' : ' is-closed'}"><i class="dot${st.open ? '' : ' is-closed'}"></i>${esc(st.label)}</span>
@@ -1238,6 +1245,7 @@ function clipFor(i) {
   return `polygon(${[...top, ...[...bot].reverse()].map(([x, y]) => `${x}% ${y}%`).join(',')})`;
 }
 
+const BOX_RATIO = 1.55; // matches .box aspect-ratio
 function setupStory() {
   const sec = $('#top');
   const pin = $('#storyPin');
@@ -1251,6 +1259,7 @@ function setupStory() {
   const head = $('#stackHead');
   const labels = $$('#sLabels li');
   const impact = $('#impact');
+  const combo = $('#combo');
   const comboHead = $('#comboHead');
   const box = $('#box');
   const boxSlot = $('#boxSlot');
@@ -1284,6 +1293,14 @@ function setupStory() {
     const stack = { x: sx, y: top + ((vh - top) - sw / ASPECT) / 2, w: sw };
     const iw2 = Math.min(vw * (mobile ? 0.78 : 0.4), (vh * 0.4) * ASPECT, 580);
     const imp = { x: (vw - iw2) / 2, y: (vh - iw2 / ASPECT) / 2, w: iw2 };
+    // fit the combo box between the price heading and the buttons, whatever the screen height
+    const headBottom = comboHead.offsetTop + comboHead.offsetHeight;
+    const ctaTop = cta.offsetTop;
+    const room = Math.max(120, ctaTop - headBottom - 40);
+    const bw = Math.round(Math.min(600, vw * 0.9, room * BOX_RATIO));
+    box.style.setProperty('--bw', `${bw}px`);
+    box.style.top = `${Math.round(headBottom + 18 + (room - bw / BOX_RATIO) / 2)}px`;
+    box.style.bottom = 'auto';
     const b = rel(boxSlot.getBoundingClientRect());
     const inBox = { x: b.x, y: b.y, w: b.w };
     const base = Math.ceil(Math.max(hero.w, zoom.w, stack.w, imp.w, inBox.w));
@@ -1354,7 +1371,8 @@ function setupStory() {
       vibrate([20, 30, 12]);
     }
 
-    // combo box
+    // combo box (kept hidden until its scene so it never paints or shifts while off-stage)
+    set(combo, 'visibility', p > 0.58 ? 'visible' : 'hidden');
     const riseY = ((1 - easeOut(seg(p, 0.61, 0.69))) * M.vh * 0.9).toFixed(1);
     set(back, 'transform', `translate3d(0,${riseY}px,0)`);
     set(front, 'transform', `translate3d(0,${riseY}px,0)`);
@@ -1421,13 +1439,32 @@ function setupScroll() {
   };
   addEventListener('scroll', kick, { passive: true });
   update();
+
+  // header logo + icons lean a little with scroll speed, then ease back (one CSS variable, only while moving)
+  if (reduced) return;
+  const dock = $('#dock');
+  let lean = 0, leanY = scrollY, leaning = 0;
+  const step = () => {
+    const y = scrollY;
+    const target = clamp((y - leanY) * 0.3, -7, 7);
+    leanY = y;
+    lean += (target - lean) * 0.16;
+    const settled = Math.abs(lean) < 0.04 && Math.abs(target) < 0.04;
+    const v = settled ? '0deg' : `${lean.toFixed(2)}deg`;
+    nav.style.setProperty('--lean', v);
+    dock.style.setProperty('--lean', v);
+    leaning = settled ? 0 : requestAnimationFrame(step);
+    if (settled) lean = 0;
+  };
+  addEventListener('scroll', () => { if (!leaning) leaning = requestAnimationFrame(step); }, { passive: true });
 }
 
 function updateDock() {
   const dock = $('#dock');
   const sec = $('#top');
   const storyEnd = sec.offsetTop + sec.offsetHeight - innerHeight * 0.6;
-  const show = cartCount() > 0 ? scrollY < 40 || scrollY > storyEnd || story.p < 0.04 : scrollY > storyEnd;
+  // stay out of the way of the hero buttons and the story; the header cart button is always there
+  const show = scrollY > storyEnd;
   dock.classList.toggle('is-on', show && !html.classList.contains('lock'));
 }
 

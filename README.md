@@ -26,13 +26,15 @@ It replaces the link-in-bio page and the 5–7 page PDF menu. Customers browse t
 - The brand is written as **MEAT AND CHEEZZ** everywhere, in both languages, with no Arabic transliteration.
 - **Logo**: the shop-sign logo (white lettering between yellow capsule bars) is redrawn as a pure vector, so it needs no font and stays sharp at any size. `public/img/logo.svg` is the standalone file; the page uses an inline `<symbol id="logo">` whose colours come from `--logo-fg` / `--logo-bar`, so it turns black over the yellow scroll scene. It appears in the header, hero, combo box, footer, admin, 404, favicon, app icons and share image.
 - **Toasts**: dark cards that drop in under the header, showing the item photo and a countdown bar when something is added to the cart.
+- **Scroll motion**: the header logo and icons lean slightly with scroll speed and settle back (one CSS variable, only while scrolling). Icons on cards pop in once as their card appears.
+- **Fits any screen height**: the hero logo (and the burger photo on phones) is sized from the screen height. The combo box is measured to fit between the price and the buttons, so nothing overlaps on iPad landscape or short iPhones.
 - **Opening scroll story (pinned, scroll-scrubbed), starring the Smash Burger**. The photo is AI-upscaled ×4 from the PDF and cut into 5 real layers:
   1. **Hero**: the burger on a yellow slab, the Google badge, "MEAT AND CHEEZZ" with a cheese drip, and two clear buttons: **Order now** and **Our branches**.
   2. **The stack**: on scroll the burger moves to the centre and splits into its layers, each with a short label.
   3. **SMASH!**: the layers slam back together.
   4. **Combo**: a branded box rises, the burger drops in with fries, a drink and a dip, and the lid closes. "Order the Smash combo" opens the item sheet with the combo already ticked.
   - Only `transform` and `opacity` are animated. There are no blur/backdrop filters, canvas particles or per-frame clip-paths, and the layout is re-measured only on a real resize, not when the iOS address bar shows or hides. Reduced-motion users get the static hero.
-- **Branches with a real Google map of Amman**: each branch card has live open/closed status, rating, hours, Order here, Directions, WhatsApp and Call. Tapping a card moves the embedded map (no API key needed) to that branch, and "Open in Google Maps" opens the full app. The map loads lazily, only when you get near the section.
+- **Branches with a real Google map of Amman**: each branch card shows a photo of that storefront (`public/img/branches/`), plus live open/closed status, rating, hours, Order here, Directions, WhatsApp and Call. Tapping a card moves the embedded map (no API key needed) to that branch, and "Open in Google Maps" opens the full app. The map loads lazily, only when you get near the section.
 - **Reviews**: three real snippets from the Google Maps listing.
 
 **Ordering**
