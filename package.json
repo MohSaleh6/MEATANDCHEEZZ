@@ -1,0 +1,18 @@
+{
+  "name": "meat-and-cheezz",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Meat & Cheezz — menu, WhatsApp ordering and admin dashboard on Cloudflare Workers + D1",
+  "type": "module",
+  "scripts": {
+    "seed:build": "node scripts/build-seed.mjs",
+    "stamp": "node scripts/stamp.mjs",
+    "db:local": "wrangler d1 migrations apply DB --local",
+    "db:remote": "wrangler d1 migrations apply DB --remote",
+    "dev": "npm run stamp && wrangler dev",
+    "deploy": "npm run stamp && wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^4.40.0"
+  }
+}
