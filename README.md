@@ -1,4 +1,4 @@
-# Meat & Cheezz — لحمة وجبنة
+# MEAT AND CHEEZZ
 
 A fast, animated, Arabic-first ordering website for **Meat & Cheezz** (Amman: Abdoun & Mecca St.).
 It replaces the link-in-bio page and the 5–7 page PDF menu. Customers browse the menu, build their order, and send it to the selected branch on **WhatsApp** as a neatly formatted message. The owner manages everything from a password-protected **dashboard** at `/admin`.
@@ -22,20 +22,16 @@ It replaces the link-in-bio page and the 5–7 page PDF menu. Customers browse t
 
 ## 2. Customer site — what's in it
 
-**Brand & motion**
-- **Intro**: the burger builds itself layer by layer (bun → patty → cheese drips → lettuce → bun), the logo slams in, and a yellow wipe reveals the page. It plays once per session and is skipped for reduced-motion users and on repeat visits.
+**Brand & motion** (kept deliberately simple so it stays smooth on iPhone/iPad Safari)
+- The brand is written as **MEAT AND CHEEZZ** everywhere, in both languages, with no Arabic transliteration.
 - **Opening scroll story (pinned, scroll-scrubbed), starring the Smash Burger**. The photo is AI-upscaled ×4 from the PDF and cut into 5 real layers:
-  1. **Hero**: the floating burger with 3D tilt, a rotating "★ 4.9 GOOGLE" ring, ember particles and the cheese drip under «وجبنة».
-  2. **Zoom**: on scroll, the copy slides away, the burger glides to centre and a yellow halftone burst explodes from it.
-  3. **The stack**: the burger splits into brioche · beef bacon + secret sauce · smash patty #1 + cheddar · smash patty #2 + caramelized onions · base. Each layer gets a label, and a giant "THE STACK" drifts behind.
-  4. **SMASH!**: the layers slam back together. Screen shake, a shockwave, grease sparks, a haptic buzz on phones.
-  5. **Combo**: a branded box rises, the burger drops in, then the fries, the drink cup and the cheese dip land with a bounce.
-  6. **Lid**: the lid swings shut in 3D onto the logo, with a light sweep. "Order the Smash combo" opens the item sheet with the combo already ticked.
-  - A chapter nav on desktop lets you jump between scenes. Reduced-motion users get the static hero.
-- **The DJ picks for you**: for customers who can't decide. Pick a mood (anything / beef / chicken / spicy), spin the turntable, and names shuffle like a slot machine before landing on a burger with confetti.
-- **Branches radar**: an animated radar with both branch pins, plus cards with live open/closed status, Google rating, hours, directions, WhatsApp and call buttons.
-- **Reviews**: real snippets from the Google Maps listing in a marquee.
-- **"Hungry?" finale**: giant outlined text that fills with yellow as you scroll.
+  1. **Hero**: the burger on a yellow slab, the Google badge, "MEAT AND CHEEZZ" with a cheese drip, and two clear buttons: **Order now** and **Our branches**.
+  2. **The stack**: on scroll the burger moves to the centre and splits into its layers, each with a short label.
+  3. **SMASH!**: the layers slam back together.
+  4. **Combo**: a branded box rises, the burger drops in with fries, a drink and a dip, and the lid closes. "Order the Smash combo" opens the item sheet with the combo already ticked.
+  - Only `transform` and `opacity` are animated. There are no blur/backdrop filters, canvas particles or per-frame clip-paths, and the layout is re-measured only on a real resize, not when the iOS address bar shows or hides. Reduced-motion users get the static hero.
+- **Branches with a real Google map of Amman**: each branch card has live open/closed status, rating, hours, Order here, Directions, WhatsApp and Call. Tapping a card moves the embedded map (no API key needed) to that branch, and "Open in Google Maps" opens the full app. The map loads lazily, only when you get near the section.
+- **Reviews**: three real snippets from the Google Maps listing.
 
 **Ordering**
 - **Menu**: a sticky category bar with a sliding indicator, scroll-spy and smooth scrolling. Search understands Arabic spelling variants (أ/ا, ة/ه…); press `/` on desktop to jump to it.
@@ -91,14 +87,13 @@ Every order is also logged (fire-and-forget) so the dashboard can show stats. Th
 
 | Performance | Accessibility | Best Practices | SEO |
 |---|---|---|---|
-| **95** | **100** | **100** | **100** |
+| **93** | **100** | **100** | **100** |
 
-LCP 2.6 s · TBT 10–70 ms · CLS 0.02 · Speed Index 3.2 s. Production adds Cloudflare's brotli and edge caching.
+LCP 3.0 s · TBT 0–80 ms · CLS 0.02 · Speed Index 1.8 s (simulated slow 4G). Production adds Cloudflare's brotli and edge caching.
 
 How it stays fast:
-- Responsive WebP images: the hero ships in 420/640/900 px variants, everything else is lazy-loaded.
+- Responsive WebP images: the story burger ships in 640/1000 px variants, everything else is lazy-loaded.
 - Self-hosted subsetted fonts with preloads.
-- Infinite animations pause while off-screen.
 - `content-visibility` on below-the-fold sections.
 - The menu renders in idle time.
 - CSS/JS are content-hashed and cached for a year (`npm run stamp`).

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>لحمة وجبنة | Meat &amp; Cheezz — برغر أنجوس في عمّان</title>
+<title>MEAT AND CHEEZZ — برغر أنجوس في عمّان</title>
 <meta name="description" content="Meat &amp; Cheezz — برغر أنجوس ١٠٠٪ في عمّان. فرع عبدون وشارع مكة. تصفّح المنيو واطلب مباشرة على واتساب. ⭐ 4.9 من +7,400 مراجعة على Google.">
 <meta name="theme-color" content="#0b0b0c">
 <meta name="color-scheme" content="dark">
@@ -11,21 +11,20 @@
 <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
 <link rel="manifest" href="/manifest.webmanifest">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Meat &amp; Cheezz — لحمة وجبنة">
+<meta property="og:title" content="MEAT AND CHEEZZ — Angus burgers in Amman">
 <meta property="og:description" content="برغر أنجوس بعمّان. اطلب على واتساب من فرع عبدون أو شارع مكة.">
 <meta property="og:image" content="/img/og.jpg">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="preload" href="/fonts/lalezar-arabic.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/anton-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/cairo-arabic.woff2" as="font" type="font/woff2" crossorigin>
 <script src="/js/boot.js?v=d40bf25fa8"></script>
-<link rel="stylesheet" href="/css/site.css?v=bb38c717f6">
-<script type="module" src="/js/app.js?v=43cac8548e"></script>
+<link rel="stylesheet" href="/css/site.css?v=1c076ab7bc">
+<script type="module" src="/js/app.js?v=9e594cb2f5"></script>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "Restaurant",
   "name": "Meat & Cheezz",
-  "alternateName": "لحمة وجبنة",
   "servesCuisine": ["Burgers", "American"],
   "priceRange": "JOD 4–10",
   "telephone": "+962788600111",
@@ -83,19 +82,6 @@
 
 <a class="skip" href="#menu" data-i18n="skip">تخطَّ إلى المنيو</a>
 
-<!-- ═══ Intro: the burger builds itself ═══ -->
-<div class="intro" id="intro" aria-hidden="true">
-  <div class="intro__stack">
-    <i class="ib ib--top"></i>
-    <i class="ib ib--lettuce"></i>
-    <i class="ib ib--cheese"></i>
-    <i class="ib ib--patty"></i>
-    <i class="ib ib--bottom"></i>
-  </div>
-  <div class="intro__word"><b>MEAT</b><em>&amp;</em><b>CHEEZZ</b></div>
-  <div class="intro__wipe"></div>
-</div>
-
 <div class="announce" id="announce" hidden><div class="announce__track"><span id="announceText"></span></div></div>
 
 <!-- ═══ Header ═══ -->
@@ -107,9 +93,8 @@
     </a>
     <nav class="nav__links" aria-label="الأقسام" data-i18n-attr="aria-label:navLabel">
       <a href="#menu" data-i18n="navMenu">المنيو</a>
-      <a href="#lineup" data-i18n="navStars">النجوم</a>
-      <a href="#dj" data-i18n="navDj">محتار؟</a>
       <a href="#branches" data-i18n="navBranches">الفروع</a>
+      <a href="#reviews" data-i18n="navReviews">آراء الزباين</a>
     </nav>
     <div class="nav__actions">
       <button class="pill pill--branch" id="branchChip" type="button">
@@ -125,181 +110,87 @@
 </header>
 
 <main id="main">
-  <!-- ═══ Story: hero + scroll-driven Smash Burger (stack → SMASH → combo box) ═══ -->
-  <section class="story" id="top" data-anim>
+  <!-- ═══ Opening: hero + scroll-driven Smash Burger (stack → SMASH → combo box) ═══ -->
+  <section class="story" id="top">
     <div class="story__pin" id="storyPin">
-      <div class="story__shake" id="storyShake">
-        <canvas class="hero__embers" id="embers" aria-hidden="true"></canvas>
-        <div class="story__decor" id="storyDecor" aria-hidden="true">
-          <div class="hero__slab"></div>
-          <div class="hero__ghost"><span>CHEEZZ CHEEZZ CHEEZZ CHEEZZ</span></div>
-        </div>
-        <div class="story__burst" id="storyBurst" aria-hidden="true"></div>
-        <div class="story__stackword" id="stackWord" aria-hidden="true">THE STACK · THE STACK · THE STACK</div>
+      <div class="story__decor" id="storyDecor" aria-hidden="true"><div class="hero__slab"></div></div>
+      <div class="story__yellow" id="storyYellow" aria-hidden="true"></div>
 
-        <div class="container hero__grid">
-      <div class="hero__copy" id="storyCopy">
-        <a class="gbadge rise" href="#reviews" style="--d:.05s">
-          <svg class="ic gbadge__g"><use href="#i-google"/></svg>
-          <b class="gbadge__score" id="gScore">4.9</b>
-          <span class="gbadge__stars" aria-hidden="true"><svg class="ic"><use href="#i-star"/></svg><svg class="ic"><use href="#i-star"/></svg><svg class="ic"><use href="#i-star"/></svg><svg class="ic"><use href="#i-star"/></svg><svg class="ic"><use href="#i-star"/></svg></span>
-          <span class="gbadge__count"><span id="gCount">+7,400</span> <span data-i18n="reviewsOnGoogle">مراجعة على Google</span></span>
-        </a>
-        <p class="hero__eyebrow rise" style="--d:.12s" id="greeting">برغر أنجوس ١٠٠٪ · عمّان</p>
-        <h1 class="hero__title">
-          <span class="line"><span class="word" style="--d:.18s" data-i18n="heroL1">لحمة</span></span>
-          <span class="line line--yellow"><span class="word word--drip" style="--d:.3s"><span data-i18n="heroL2">وجبنة</span><svg class="drip" viewBox="0 0 300 60" preserveAspectRatio="none" aria-hidden="true"><path d="M0 0h300v14c-8 0-10 6-10 14s-4 12-9 12-9-5-9-14-3-12-10-12-9 4-9 10 0 30-10 30-10-14-10-26-4-14-11-14-9 3-9 10-2 16-9 16-8-8-8-16-3-10-10-10-12 4-12 12-1 24-10 24-10-14-10-24-3-12-11-12-9 6-9 12-3 9-9 9-8-6-8-12-4-9-11-9-10 2-10 8-1 18-10 18S88 28 88 22s-3-8-10-8-9 4-9 11 0 24-10 24-9-18-9-24-3-11-10-11-9 4-9 10-2 12-9 12-9-7-9-12-4-10-11-10H0z" fill="currentColor"/></svg></span>
-          </span>
-        </h1>
-        <p class="hero__lead rise" style="--d:.45s" data-i18n="heroLead">برغر أنجوس طازة، جبنة بتسيل، وكل برغر إله اسم نجم. اطلب على واتساب بثواني.</p>
-        <div class="hero__ctas rise" style="--d:.55s">
-          <a class="btn btn--yellow btn--lg magnetic" href="#menu"><span data-i18n="orderNow">اطلب هلّق</span><svg class="ic flip-rtl"><use href="#i-arrow"/></svg></a>
-          <a class="btn btn--ghost btn--lg" href="#lineup" data-i18n="meetStars">تعرّف على النجوم</a>
+      <div class="container hero__grid">
+        <div class="hero__copy" id="storyCopy">
+          <a class="gbadge rise" href="#reviews" style="--d:.05s">
+            <svg class="ic gbadge__g"><use href="#i-google"/></svg>
+            <b class="gbadge__score" id="gScore">4.9</b>
+            <span class="gbadge__stars" aria-hidden="true"><svg class="ic"><use href="#i-star"/></svg><svg class="ic"><use href="#i-star"/></svg><svg class="ic"><use href="#i-star"/></svg><svg class="ic"><use href="#i-star"/></svg><svg class="ic"><use href="#i-star"/></svg></span>
+            <span class="gbadge__count"><span id="gCount">+7,400</span> <span data-i18n="reviewsOnGoogle">مراجعة على Google</span></span>
+          </a>
+          <h1 class="hero__title" lang="en" dir="ltr">
+            <span class="line"><span class="word" style="--d:.12s">MEAT</span></span>
+            <span class="line line--yellow"><span class="word word--drip" style="--d:.22s"><small>AND</small> CHEEZZ<svg class="drip" viewBox="0 0 300 60" preserveAspectRatio="none" aria-hidden="true"><path d="M0 0h300v14c-8 0-10 6-10 14s-4 12-9 12-9-5-9-14-3-12-10-12-9 4-9 10 0 30-10 30-10-14-10-26-4-14-11-14-9 3-9 10-2 16-9 16-8-8-8-16-3-10-10-10-12 4-12 12-1 24-10 24-10-14-10-24-3-12-11-12-9 6-9 12-3 9-9 9-8-6-8-12-4-9-11-9-10 2-10 8-1 18-10 18S88 28 88 22s-3-8-10-8-9 4-9 11 0 24-10 24-9-18-9-24-3-11-10-11-9 4-9 10-2 12-9 12-9-7-9-12-4-10-11-10H0z" fill="currentColor"/></svg></span></span>
+          </h1>
+          <p class="hero__lead rise" style="--d:.35s" data-i18n="heroLead">برغر أنجوس طازة وجبنة بتسيل. اختار، واطلب على واتساب بثواني.</p>
+          <div class="hero__ctas rise" style="--d:.45s">
+            <a class="btn btn--yellow btn--lg" href="#menu"><span data-i18n="orderNow">اطلب هلّق</span><svg class="ic flip-rtl"><use href="#i-arrow"/></svg></a>
+            <a class="btn btn--ghost btn--lg" href="#branches" data-i18n="ourBranches">فروعنا</a>
+          </div>
+          <p class="hero__open rise" style="--d:.55s"><i class="dot" id="heroDot"></i><span id="heroOpen">مفتوحين لـ 2:00 بالليل</span></p>
         </div>
-        <ul class="hero__facts rise" style="--d:.65s">
-          <li><i class="dot" id="heroDot"></i><span id="heroOpen">مفتوحين لـ 2:00 بالليل</span></li>
-          <li><svg class="ic"><use href="#i-store"/></svg><span data-i18n="twoBranches">عبدون · شارع مكة</span></li>
-          <li><svg class="ic"><use href="#i-scooter"/></svg><span data-i18n="pickupDelivery">توصيل واستلام</span></li>
-        </ul>
+        <div class="hero__visual" id="heroSlot"><div class="hero__glow" aria-hidden="true"></div></div>
       </div>
-      <div class="hero__visual" id="heroSlot">
-            <div class="story__slotdecor" id="slotDecor">
-              <div class="hero__glow" aria-hidden="true"></div>
-              <svg class="hero__ring" viewBox="0 0 200 200" aria-hidden="true" direction="ltr">
-                <defs><path id="ringPath" d="M100,100 m-84,0 a84,84 0 1,1 168,0 a84,84 0 1,1 -168,0"/></defs>
-                <text><textPath href="#ringPath">★ 4.9 GOOGLE ★ 7,400+ REVIEWS ★ 100% ANGUS ★ AMMAN ★ OPEN TILL 2AM </textPath></text>
-              </svg>
-              <span class="fchip fchip--1"><svg class="ic"><use href="#i-flame"/></svg><span data-i18n="chip1">أنجوس ١٠٠٪</span></span>
-              <span class="fchip fchip--2"><svg class="ic"><use href="#i-cheese"/></svg><span data-i18n="chip2">جبنة بتسيل</span></span>
-              <span class="fchip fchip--3"><svg class="ic"><use href="#i-drop"/></svg><span data-i18n="chip3">صوص سرّي</span></span>
-            </div>
-          </div>
-        </div>
 
-        <!-- the actor: one Smash Burger cut into 5 layers -->
-        <div class="sb" id="sb">
-          <div class="sb__in"><div class="sb__float" id="sbFloat">
-            <i class="sb__shadow" id="sbShadow"></i>
-            <div class="sb__l"><img src="/img/story/smash-640.webp" srcset="/img/story/smash-640.webp 640w, /img/story/smash-1000.webp 1000w" sizes="(max-width: 899px) 90vw, 620px" width="1000" height="789" fetchpriority="high" alt="سماش برغر من لحمة وجبنة: أنجوس سماش مع بيف بيكن وتشدر وبصل مكرمل" data-i18n-attr="alt:storyAlt"></div>
-            <div class="sb__l" aria-hidden="true"><img src="/img/story/smash-640.webp" srcset="/img/story/smash-640.webp 640w, /img/story/smash-1000.webp 1000w" sizes="(max-width: 899px) 90vw, 620px" width="1000" height="789" alt=""></div>
-            <div class="sb__l" aria-hidden="true"><img src="/img/story/smash-640.webp" srcset="/img/story/smash-640.webp 640w, /img/story/smash-1000.webp 1000w" sizes="(max-width: 899px) 90vw, 620px" width="1000" height="789" alt=""></div>
-            <div class="sb__l" aria-hidden="true"><img src="/img/story/smash-640.webp" srcset="/img/story/smash-640.webp 640w, /img/story/smash-1000.webp 1000w" sizes="(max-width: 899px) 90vw, 620px" width="1000" height="789" alt=""></div>
-            <div class="sb__l" aria-hidden="true"><img src="/img/story/smash-640.webp" srcset="/img/story/smash-640.webp 640w, /img/story/smash-1000.webp 1000w" sizes="(max-width: 899px) 90vw, 620px" width="1000" height="789" alt=""></div>
-          </div></div>
-        </div>
-
-        <!-- chapter 2: the stack -->
-        <div class="stackhead" id="stackHead">
-          <p class="kicker" data-i18n="stackKicker">تشريح السماش</p>
-          <h2 class="sectitle" data-i18n="stackTitle">شو جوّا السماش؟</h2>
-        </div>
-        <ol class="slabels" id="sLabels">
-          <li><em>01</em><b data-i18n="l0t">بريوش طري</b><span data-i18n="l0d">محمّص على الصاج</span></li>
-          <li><em>02</em><b data-i18n="l1t">بيف بيكن + صوص سري</b><span data-i18n="l1d">مقرمش، مدخّن… والوصفة سر</span></li>
-          <li><em>03</em><b data-i18n="l2t">سماش أنجوس #١</b><span data-i18n="l2d">تحت تشدر ذايبة</span></li>
-          <li><em>04</em><b data-i18n="l3t">سماش أنجوس #٢</b><span data-i18n="l3d">بصل مكرمل وحواف مقرمشة</span></li>
-          <li><em>05</em><b data-i18n="l4t">الأساس</b><span data-i18n="l4d">بريوش بيمسك كل هالحب</span></li>
-        </ol>
-
-        <!-- chapter 3: SMASH! -->
-        <div class="impact" id="impact" aria-hidden="true">
-          <i class="impact__wave"></i><i class="impact__wave impact__wave--2"></i>
-          <b class="impact__word">SMASH!</b>
-          <span class="impact__sub" data-i18n="impactSub">بينسحق عالصاج الساخن… قدّامك</span>
-        </div>
-
-        <!-- chapter 4: combo box -->
-        <div class="combo" id="combo">
-          <div class="combo__head" id="comboHead">
-            <p class="kicker" data-i18n="comboKicker">حوّلها كومبو</p>
-            <h2 class="sectitle"><span id="comboPrice">+1.50</span> <small data-i18n="cur">د.أ</small></h2>
-            <p class="secsub" data-i18n="comboSub">بطاطا مقرمشة + مشروب بارد + صوص</p>
-          </div>
-          <div class="box" id="box">
-            <div class="box__back"></div>
-            <div class="box__slot" id="boxSlot"></div>
-            <img class="box__fries" src="/img/story/fries-360.webp" alt="" width="360" height="474" loading="lazy" decoding="async">
-            <div class="box__cup" aria-hidden="true"><i class="cup__straw"></i><i class="cup__lid"></i><i class="cup__body"><span>M&amp;C</span></i></div>
-            <img class="box__dip" src="/img/story/dip-360.webp" alt="" width="360" height="170" loading="lazy" decoding="async">
-            <div class="box__front"><span>MEAT &amp; CHEEZZ</span><small>FRESH · SMASHED · CHEEZZY · AMMAN</small></div>
-            <div class="box__lid" id="boxLid">
-              <div class="lid__face lid__out"><div class="lid__logo"><b>MEAT</b><small>AND</small><b>CHEEZZ</b></div><small class="lid__tag">★ SMASH COMBO ★</small></div>
-              <div class="lid__face lid__in"></div>
-            </div>
-          </div>
-          <div class="combo__cta" id="comboCta">
-            <button class="btn btn--yellow btn--lg magnetic" type="button" data-open-combo="smash"><svg class="ic"><use href="#i-bag"/></svg><span data-i18n="comboCta">اطلب السماش كومبو</span><span class="btn__price" id="comboCtaPrice"></span></button>
-          </div>
+      <!-- the burger: one Smash Burger photo cut into 5 layers -->
+      <div class="sb" id="sb">
+        <div class="sb__in">
+          <i class="sb__shadow" id="sbShadow"></i>
+            <div class="sb__l"><img src="/img/story/smash-640.webp" srcset="/img/story/smash-640.webp 640w, /img/story/smash-1000.webp 1000w" sizes="(max-width: 899px) min(400px, 92vw), 620px" width="1000" height="789" fetchpriority="high" alt="سماش برغر من Meat &amp; Cheezz: أنجوس سماش مع بيف بيكن وتشدر وبصل مكرمل" data-i18n-attr="alt:storyAlt"></div>
+            <div class="sb__l" aria-hidden="true"><img src="/img/story/smash-640.webp" srcset="/img/story/smash-640.webp 640w, /img/story/smash-1000.webp 1000w" sizes="(max-width: 899px) min(400px, 92vw), 620px" width="1000" height="789" alt="" decoding="async"></div>
+            <div class="sb__l" aria-hidden="true"><img src="/img/story/smash-640.webp" srcset="/img/story/smash-640.webp 640w, /img/story/smash-1000.webp 1000w" sizes="(max-width: 899px) min(400px, 92vw), 620px" width="1000" height="789" alt="" decoding="async"></div>
+            <div class="sb__l" aria-hidden="true"><img src="/img/story/smash-640.webp" srcset="/img/story/smash-640.webp 640w, /img/story/smash-1000.webp 1000w" sizes="(max-width: 899px) min(400px, 92vw), 620px" width="1000" height="789" alt="" decoding="async"></div>
+            <div class="sb__l" aria-hidden="true"><img src="/img/story/smash-640.webp" srcset="/img/story/smash-640.webp 640w, /img/story/smash-1000.webp 1000w" sizes="(max-width: 899px) min(400px, 92vw), 620px" width="1000" height="789" alt="" decoding="async"></div>
         </div>
       </div>
 
-      <nav class="chapters" id="chapters" aria-label="فصول القصة" data-i18n-attr="aria-label:chaptersLabel">
-        <button type="button" data-ch="0" class="on"><i></i><span data-i18n="ch0">البداية</span></button>
-        <button type="button" data-ch="1"><i></i><span data-i18n="ch1">الطبقات</span></button>
-        <button type="button" data-ch="2"><i></i><span data-i18n="ch2">سماش!</span></button>
-        <button type="button" data-ch="3"><i></i><span data-i18n="ch3">كومبو</span></button>
-      </nav>
-      <div class="story__hint" id="storyHint" aria-hidden="true"><i class="story__mouse"><i></i></i><span data-i18n="storyHint">انزل… وشوف السماش بينبني</span></div>
-      <div class="story__bar" aria-hidden="true"><i id="storyBar"></i></div>
-    </div>
-  </section>
-
-  <!-- ═══ Ticker ═══ -->
-  <div class="ticker" aria-hidden="true" data-anim>
-    <div class="ticker__row ticker__row--a"><div class="ticker__track" id="tickerA"></div></div>
-    <div class="ticker__row ticker__row--b"><div class="ticker__track" id="tickerB"></div></div>
-  </div>
-
-  <!-- ═══ Stats ═══ -->
-  <section class="stats container" aria-label="أرقام" data-i18n-attr="aria-label:statsLabel">
-    <div class="stat reveal"><b class="stat__n" data-count="4.9" data-dec="1">0</b><span data-i18n="statRating">تقييم Google</span></div>
-    <div class="stat reveal"><b class="stat__n" id="statReviews" data-count="13300" data-plus="1">0</b><span data-i18n="statReviews">مراجعة بالفرعين</span></div>
-    <div class="stat reveal"><b class="stat__n" id="statBurgers" data-count="14">0</b><span data-i18n="statBurgers">برغر على المنيو</span></div>
-    <div class="stat reveal"><b class="stat__n" id="statBranches" data-count="2">0</b><span data-i18n="statBranches">فروع بعمّان</span></div>
-  </section>
-
-  <!-- ═══ Lineup: featured burgers as headliners ═══ -->
-  <section class="lineup" id="lineup" data-anim>
-    <div class="container sechead">
-      <p class="kicker" data-i18n="lineupKicker">نجوم المنيو</p>
-      <h2 class="sectitle"><span data-i18n="lineupTitle">الليلة على المسرح</span></h2>
-      <p class="secsub" data-i18n="lineupSub">كل برغر عنا إله اسم نجم… وإله جمهوره. اسحب وشوف مين الهيدلاينر.</p>
-      <div class="rail-nav">
-        <button class="roundbtn" id="railPrev" type="button" aria-label="السابق" data-i18n-attr="aria-label:prev"><svg class="ic flip-rtl" style="transform:scaleX(-1)"><use href="#i-arrow"/></svg></button>
-        <button class="roundbtn" id="railNext" type="button" aria-label="التالي" data-i18n-attr="aria-label:next"><svg class="ic flip-rtl"><use href="#i-arrow"/></svg></button>
+      <div class="stackhead" id="stackHead">
+        <p class="kicker" data-i18n="stackKicker">تشريح السماش</p>
+        <h2 class="sectitle" data-i18n="stackTitle">شو جوّا السماش؟</h2>
       </div>
-    </div>
-    <div class="rail" id="rail" tabindex="0" aria-label="البرغرات المميزة" data-i18n-attr="aria-label:featured"></div>
-  </section>
+      <ol class="slabels" id="sLabels">
+        <li><b data-i18n="l0t">بريوش طري</b></li>
+        <li><b data-i18n="l1t">بيف بيكن + صوص سري</b></li>
+        <li><b data-i18n="l2t">سماش أنجوس + تشدر</b></li>
+        <li><b data-i18n="l3t">سماش أنجوس + بصل مكرمل</b></li>
+        <li><b data-i18n="l4t">بريوش محمّص</b></li>
+      </ol>
 
-  <!-- ═══ DJ: spin the record ═══ -->
-  <section class="dj paused" id="dj" data-anim>
-    <div class="container dj__grid">
-      <div class="dj__copy">
-        <p class="kicker" data-i18n="djKicker">محتار شو تاكل؟</p>
-        <h2 class="sectitle" data-i18n="djTitle">خلّي الـDJ يختارلك</h2>
-        <p class="secsub" data-i18n="djSub">اختار المود، لفّ الأسطوانة، واترك الباقي علينا.</p>
-        <div class="dj__moods" role="radiogroup" aria-label="المود" data-i18n-attr="aria-label:mood" id="djMoods">
-          <button type="button" role="radio" aria-checked="true" data-mood="all" data-i18n="moodAll">أي إشي</button>
-          <button type="button" role="radio" aria-checked="false" data-mood="angus" data-i18n="moodBeef">لحمة</button>
-          <button type="button" role="radio" aria-checked="false" data-mood="chicken" data-i18n="moodChicken">دجاج</button>
-          <button type="button" role="radio" aria-checked="false" data-mood="spicy" data-i18n="moodSpicy">حار 🌶</button>
+      <div class="impact" id="impact" aria-hidden="true">
+        <i class="impact__wave"></i>
+        <b class="impact__word">SMASH!</b>
+      </div>
+
+      <div class="combo" id="combo">
+        <div class="combo__head" id="comboHead">
+          <p class="kicker" data-i18n="comboKicker">حوّلها كومبو</p>
+          <h2 class="sectitle"><span id="comboPrice">+1.50</span> <small data-i18n="cur">د.أ</small></h2>
+          <p class="secsub" data-i18n="comboSub">بطاطا مقرمشة + مشروب بارد + صوص</p>
         </div>
-        <button class="btn btn--yellow btn--lg magnetic" id="djSpin" type="button"><svg class="ic"><use href="#i-dice"/></svg><span data-i18n="djSpin">لفّ الأسطوانة</span></button>
-        <div class="dj__result" id="djResult" aria-live="polite"></div>
-      </div>
-      <div class="deck" id="deck" aria-hidden="true">
-        <div class="deck__plinth">
-          <div class="deck__platter">
-            <div class="vinyl" id="djVinyl">
-              <div class="vinyl__label"><img id="djImg" src="/img/menu/meat-cheezz-sm.webp" alt="" width="180" height="150" loading="lazy"></div>
-            </div>
+        <div class="box" id="box">
+          <div class="box__back"></div>
+          <div class="box__slot" id="boxSlot"></div>
+          <img class="box__fries" src="/img/story/fries-360.webp" alt="" width="360" height="474" loading="lazy" decoding="async">
+          <div class="box__cup" aria-hidden="true"><i class="cup__straw"></i><i class="cup__lid"></i><i class="cup__body"><span>M&amp;C</span></i></div>
+          <img class="box__dip" src="/img/story/dip-360.webp" alt="" width="360" height="170" loading="lazy" decoding="async">
+          <div class="box__front"><span>MEAT &amp; CHEEZZ</span><small>FRESH · SMASHED · CHEEZZY · AMMAN</small></div>
+          <div class="box__lid" id="boxLid">
+            <div class="lid__face lid__out"><div class="lid__logo"><b>MEAT</b><small>AND</small><b>CHEEZZ</b></div><small class="lid__tag">★ SMASH COMBO ★</small></div>
+            <div class="lid__face lid__in"></div>
           </div>
-          <div class="deck__arm" id="djArm"><i></i></div>
-          <div class="deck__screen"><span id="djName">PRESS SPIN</span></div>
-          <div class="deck__knobs"><i></i><i></i><i></i></div>
+        </div>
+        <div class="combo__cta" id="comboCta">
+          <button class="btn btn--yellow btn--lg" type="button" data-open-combo="smash"><svg class="ic"><use href="#i-bag"/></svg><span data-i18n="comboCta">اطلب السماش كومبو</span><span class="btn__price" id="comboCtaPrice"></span></button>
+          <a class="btn btn--ghost btn--lg" href="#menu" data-i18n="fullMenu">المنيو كامل</a>
         </div>
       </div>
+      <div class="story__hint" id="storyHint" aria-hidden="true"><i class="story__mouse"><i></i></i><span data-i18n="storyHint">انزل لتحت</span></div>
     </div>
   </section>
 
@@ -327,39 +218,24 @@
   </section>
 
   <!-- ═══ Branches ═══ -->
-  <section class="branches paused" id="branches" data-anim>
+  <section class="branches" id="branches">
     <div class="container">
       <div class="sechead">
         <p class="kicker" data-i18n="brKicker">فروعنا</p>
         <h2 class="sectitle" data-i18n="brTitle">تعال لعنّا… أو بنجيك</h2>
       </div>
       <div class="branches__grid">
-        <div class="radar" aria-hidden="true">
-          <svg viewBox="0 0 320 320">
-            <defs>
-              <radialGradient id="rg" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#ffd400" stop-opacity=".18"/><stop offset="1" stop-color="#ffd400" stop-opacity="0"/></radialGradient>
-              <linearGradient id="sweep" x1="0" x2="1"><stop offset="0" stop-color="#ffd400" stop-opacity="0"/><stop offset="1" stop-color="#ffd400" stop-opacity=".45"/></linearGradient>
-            </defs>
-            <circle cx="160" cy="160" r="150" fill="url(#rg)"/>
-            <g fill="none" stroke="#ffd400" stroke-opacity=".18"><circle cx="160" cy="160" r="150"/><circle cx="160" cy="160" r="110"/><circle cx="160" cy="160" r="70"/><circle cx="160" cy="160" r="30"/><path d="M10 160h300M160 10v300"/></g>
-            <path class="radar__road" d="M40 92 C 110 120, 120 200, 200 214 S 280 250, 300 270" fill="none" stroke="#fff" stroke-opacity=".12" stroke-width="6" stroke-linecap="round"/>
-            <path class="radar__road" d="M70 300 C 110 230, 170 170, 290 120" fill="none" stroke="#fff" stroke-opacity=".08" stroke-width="4" stroke-linecap="round"/>
-            <g class="radar__sweep"><path d="M160 160 L310 160 A150 150 0 0 0 266 54 Z" fill="url(#sweep)"/></g>
-            <path class="radar__route" d="M118 104 C 150 150, 190 170, 214 208" fill="none" stroke="#ffd400" stroke-width="2.5" stroke-dasharray="6 7"/>
-            <g class="radar__pin" style="--x:118px;--y:104px"><circle r="18" class="pulse"/><circle r="7" fill="#ffd400"/></g>
-            <g class="radar__pin" style="--x:214px;--y:208px"><circle r="18" class="pulse"/><circle r="7" fill="#ffd400"/></g>
-            <text x="118" y="80" text-anchor="middle" class="radar__t" id="radarMecca">MECCA ST.</text>
-            <text x="214" y="242" text-anchor="middle" class="radar__t" id="radarAbdoun">ABDOUN</text>
-            <text x="160" y="306" text-anchor="middle" class="radar__t radar__t--city">AMMAN</text>
-          </svg>
-        </div>
         <div class="branches__cards" id="branchCards"></div>
+        <div class="map">
+          <iframe id="branchMap" title="خريطة فروع Meat &amp; Cheezz في عمّان" data-i18n-attr="title:mapTitle" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+          <a class="map__open" id="mapOpen" href="#" target="_blank" rel="noopener"><svg class="ic"><use href="#i-pin"/></svg><span data-i18n="openInMaps">افتح بخرائط Google</span></a>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- ═══ Reviews ═══ -->
-  <section class="reviews paused" id="reviews" data-anim>
+  <section class="reviews" id="reviews">
     <div class="container sechead">
       <p class="kicker" data-i18n="rvKicker">من Google Maps</p>
       <h2 class="sectitle"><span data-i18n="rvTitle">عمّان بتحكي</span> <span class="rv-score"><svg class="ic"><use href="#i-star"/></svg> <span id="rvScore">4.9</span></span></h2>
@@ -367,21 +243,13 @@
     <div class="quotes" id="quotes"></div>
   </section>
 
-  <!-- ═══ Final CTA ═══ -->
-  <section class="finale" id="finale">
-    <div class="container finale__in">
-      <h2 class="finale__big" id="finaleBig" data-i18n="finaleBig">جوعان؟</h2>
-      <p class="finale__sub" data-i18n="finaleSub">طلبك بيوصل واتساب الفرع بثانية. بلا تطبيقات، بلا عمولات.</p>
-      <a class="btn btn--yellow btn--xl magnetic" href="#menu"><svg class="ic"><use href="#i-wa"/></svg><span data-i18n="finaleBtn">يلا نطلب</span></a>
-    </div>
-  </section>
 </main>
 
 <footer class="foot">
   <div class="container foot__grid">
     <div class="foot__brand">
       <div class="foot__word">MEAT<br><span>&amp; CHEEZZ</span></div>
-      <p data-i18n="footTag">لحمة وجبنة — برغر أنجوس بعمّان من ١٢ الظهر لـ ٢ بالليل.</p>
+      <p data-i18n="footTag">برغر أنجوس بعمّان — من ١٢ الظهر لـ ٢ بالليل.</p>
       <div class="socials" id="socials"></div>
     </div>
     <div class="foot__col" id="footBranches"></div>
@@ -509,7 +377,6 @@
 </dialog>
 
 <div class="toasts" id="toasts" role="status" aria-live="polite"></div>
-<div class="cursor" id="cursor" aria-hidden="true"></div>
 <noscript><p class="noscript">فعّل الجافاسكربت لتقدر تطلب. Enable JavaScript to order.</p></noscript>
 </body>
 </html>
