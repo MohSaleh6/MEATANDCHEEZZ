@@ -254,7 +254,7 @@ function renderLineup() {
     return `<article class="track reveal${out ? ' is-out' : ''}" data-id="${esc(item.id)}" style="--rd:${Math.min(i, 4) * 90}ms">
       ${spicy ? `<span class="track__tag">${icon('chili')}${esc(t('tag_spicy'))}</span>` : ''}
       <div class="track__vinyl" aria-hidden="true"></div>
-      <img class="track__img" src="${esc(item.image)}" alt="${esc(L(item, 'name'))}" loading="lazy" decoding="async" width="440" height="352">
+      <img class="track__img" src="${esc(item.image)}" alt="${esc(L(item, 'name'))}" loading="lazy" decoding="async" width="560" height="450">
       <div class="track__no">TRACK ${String(i + 1).padStart(2, '0')}</div>
       <h3 class="track__name${item.name_en.replace(/\s+burger$/i, '').length > 10 ? ' track__name--long' : ''}">${esc(item.name_en.replace(/\s+burger$/i, ''))}</h3>
       ${S.lang === 'ar' ? `<p class="track__ar">${esc(item.name_ar)}</p>` : ''}
@@ -286,7 +286,7 @@ function cardHTML(item, idx) {
   return `<article class="card reveal${out ? ' is-out' : ''}" data-id="${esc(item.id)}" data-search="${esc(norm(search))}" style="--rd:${(idx % 3) * 70}ms">
     ${out ? `<span class="stamp">${esc(t('soldOut'))}</span>` : ''}
     <button class="card__hit" type="button" data-open="${esc(item.id)}" aria-label="${esc(name)}"></button>
-    <div class="card__media"><img src="${esc(item.image)}" alt="" loading="lazy" decoding="async" width="440" height="360"></div>
+    <div class="card__media"><img src="${esc(item.image)}" alt="" loading="lazy" decoding="async" width="560" height="460"></div>
     <h4 class="card__title">${esc(name)}<span class="card__alt">${esc(other(item, 'name'))}</span></h4>
     <p class="card__desc">${esc(L(item, 'desc'))}</p>
     <div class="card__tags">${tagChips(item, true)}</div>
@@ -683,7 +683,7 @@ function openSheet(id, fromImg, opts = {}) {
 
   $('#sheetBody').innerHTML = `
     <div class="si__hero">
-      ${item.image ? `<img id="sheetImg" src="${esc(item.image)}" alt="${esc(L(item, 'name'))}" width="440" height="360">` : `<span class="si__ic">${icon(miniIcon(item))}</span>`}
+      ${item.image ? `<img id="sheetImg" src="${esc(item.image)}" alt="${esc(L(item, 'name'))}" width="560" height="460">` : `<span class="si__ic">${icon(miniIcon(item))}</span>`}
       <div class="si__drips" id="siDrips">${DRIPS_SVG}</div>
     </div>
     <h2 class="si__title" id="sheetTitle">${esc(L(item, 'name'))}</h2>
@@ -863,7 +863,7 @@ function renderCart() {
         l.note ? `“${l.note}”` : '',
       ].filter(Boolean).join(' · ');
       return `<div class="cline" data-k="${esc(l.k)}">
-        <div class="cline__img">${item.image ? `<img src="${esc(smImg(item.image))}" alt="" loading="lazy" width="180" height="150">` : icon(miniIcon(item))}</div>
+        <div class="cline__img">${item.image ? `<img src="${esc(smImg(item.image))}" alt="" loading="lazy" width="220" height="180">` : icon(miniIcon(item))}</div>
         <div><p class="cline__name">${esc(L(item, 'name'))}</p>${opts ? `<p class="cline__opts">${esc(opts)}</p>` : ''}
           ${isOut(item) ? `<p class="cline__opts" style="color:#ff8a73">${esc(t('soldOut'))}</p>` : ''}</div>
         <div class="cline__side">
@@ -878,7 +878,7 @@ function renderCart() {
   const sides = ['french-fries', 'curly-fries', 'onion-rings', 'mozzarella-sticks', 'cheese-dip', 'chicken-strips']
     .map((id) => S.items[id]).filter((i) => i && i.image && !isOut(i) && !S.cart.some((l) => l.id === i.id)).slice(0, 5);
   $('#upsell').innerHTML = S.cart.length && sides.length ? `<h4>${esc(t('upsellTitle'))}</h4><div class="upsell__row">${sides.map((i) =>
-    `<div class="up"><img src="${esc(smImg(i.image))}" alt="" loading="lazy" width="180" height="120"><b>${esc(L(i, 'name'))}</b>
+    `<div class="up"><img src="${esc(smImg(i.image))}" alt="" loading="lazy" width="220" height="150"><b>${esc(L(i, 'name'))}</b>
       <button class="mini__btn" type="button" data-add="${esc(i.id)}" data-size="${esc(i.sizes[0].id)}" aria-label="${esc(`${t('addToOrder')}: ${L(i, 'name')}`)}">${icon('plus')}${money(i.sizes[0].price)}</button></div>`).join('')}</div>` : '';
 
   odo($('#cartTotal'), money(cartTotal()));
@@ -1292,7 +1292,7 @@ function setupDJ() {
       img.src = smImg(pick.image);
       spinning = false;
       const tl = TAGLINES[pick.id]?.[S.lang] || L(pick, 'desc');
-      $('#djResult').innerHTML = `<div class="djcard"><img src="${esc(smImg(pick.image))}" alt="" width="180" height="150">
+      $('#djResult').innerHTML = `<div class="djcard"><img src="${esc(smImg(pick.image))}" alt="" width="220" height="180">
         <div><small style="color:var(--yellow);font-weight:800">${esc(t('djPick'))}</small><h3>${esc(L(pick, 'name'))}</h3><p>${esc(tl)}</p>
         <button class="btn btn--yellow" type="button" data-open="${esc(pick.id)}">${icon('plus')}${esc(t('djOrder'))} · ${money(minPrice(pick))}</button></div></div>`;
       $('#djSpin span').textContent = t('djAgain');
