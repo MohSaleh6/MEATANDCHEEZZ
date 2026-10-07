@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "meat-and-cheezz",
+  "name": "meatandcheezz",
   "main": "src/index.js",
   "compatibility_date": "2025-09-01",
   "assets": {
@@ -13,11 +13,12 @@
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "meat-and-cheezz",
-      // Paste the id printed by `npx wrangler d1 create meat-and-cheezz`
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      "database_name": "meatandcheezz",
+      "database_id": "11d82cb9-90ed-4e24-a7c6-dce43887184e",
       "migrations_dir": "migrations"
     }
   ],
+  // lets src/seed.js import the schema file as text
+  "rules": [{ "type": "Text", "globs": ["**/*.sql"], "fallthrough": true }],
   "observability": { "enabled": true }
 }

@@ -150,34 +150,26 @@ wrangler.jsonc             ← Worker + D1 + assets config
 
 ## 5. Deploy (Cloudflare Workers + D1)
 
-You need Node 18+ and a free Cloudflare account.
+This repo is already connected to the Cloudflare Worker **`meatandcheezz`** (Workers Builds, deploy command `npx wrangler deploy`), with the D1 database **`meatandcheezz`** bound in `wrangler.jsonc`.
+
+**The database sets itself up.** On the first API request, `src/seed.js` creates any missing tables and loads the starter menu, branches and settings from `public/data/menu.json`. It only inserts what is missing, so it never overwrites edits made in the dashboard. It also marks the migrations as applied, so `wrangler d1 migrations apply` won't re-seed later.
+
+**One manual step: set the dashboard password.**
+In the Cloudflare dashboard, open **Workers & Pages → meatandcheezz → Settings → Variables and Secrets → Add**:
+- `ADMIN_PASSWORD`: type **Secret**, the password for `/admin`.
+- `SESSION_SECRET`: type **Secret**, any long random string (optional, recommended).
+
+Then open `https://meatandcheezz.<your-subdomain>.workers.dev/admin`, sign in, and set each branch's **WhatsApp number** under **Branches**.
+
+Deploying from your own machine instead:
 
 ```bash
-# 1) install wrangler (dev dependency)
-npm install
-
-# 2) log in to Cloudflare (opens the browser)
-npx wrangler login
-
-# 3) create the database and copy the printed "database_id"
-npx wrangler d1 create meat-and-cheezz
-#    → paste it into wrangler.jsonc  →  d1_databases[0].database_id
-
-# 4) create the tables and load the menu, branches and settings
-npm run db:remote          # = wrangler d1 migrations apply DB --remote
-
-# 5) set the dashboard password (and an extra random secret for sessions)
+npm install && npx wrangler login
 npx wrangler secret put ADMIN_PASSWORD
-npx wrangler secret put SESSION_SECRET     # any long random string
-
-# 6) deploy
-npm run deploy             # stamps assets, then wrangler deploy
+npm run deploy             # stamps asset versions, then wrangler deploy
 ```
 
-Wrangler prints the URL, e.g. `https://meat-and-cheezz.<your-subdomain>.workers.dev`.
-Open `/admin`, sign in, and set each branch's **WhatsApp number** under **Branches** (both default to +962 7 8860 0111).
-
-**Custom domain (optional):** Cloudflare dashboard → Workers & Pages → `meat-and-cheezz` → Settings → Domains & Routes → add e.g. `order.meatandcheezz.com`.
+**Custom domain (optional):** Cloudflare dashboard → Workers & Pages → `meatandcheezz` → Settings → Domains & Routes → add e.g. `order.meatandcheezz.com`.
 
 **Run locally**
 

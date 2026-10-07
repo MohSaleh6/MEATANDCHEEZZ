@@ -2,6 +2,7 @@
 // Serves the JSON API (+ uploaded photos). Everything else is static assets from /public.
 import { HttpError, json, errorResponse, readJson, str, int, bool, slug, parseJsonColumn } from './http.js';
 import { createSession, sessionCookie, clearCookie, isAuthed, requireAdmin, checkPassword } from './auth.js';
+import { ensureSeeded } from './seed.js';
 
 const AMMAN_OFFSET = 3 * 3600; // Jordan is UTC+3 all year
 const TAGS = ['spicy', 'grilled', 'signature', 'new'];
@@ -26,8 +27,14 @@ export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     try {
-      if (url.pathname.startsWith('/api/')) return await api(request, env, ctx, url);
-      if (url.pathname.startsWith('/img/u/')) return await serveImage(env, url.pathname.slice(7));
+      if (url.pathname.startsWith('/api/')) {
+        await ensureSeeded(env);
+        return await api(request, env, ctx, url);
+      }
+      if (url.pathname.startsWith('/img/u/')) {
+        await ensureSeeded(env);
+        return await serveImage(env, url.pathname.slice(7));
+      }
       return env.ASSETS.fetch(request);
     } catch (err) {
       return errorResponse(err);
