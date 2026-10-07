@@ -1,6 +1,6 @@
 // Meat & Cheezz — customer site
 // Vanilla JS, no dependencies. Arabic-first, RTL-aware.
-import { DICT, TAGLINES, QUOTES } from './i18n.js?v=dd0bd2e24e';
+import { DICT, TAGLINES, QUOTES } from './i18n.js?v=b4ca3f2d7c';
 
 /* ════════════════════════ utilities ════════════════════════ */
 const $ = (s, r = document) => r.querySelector(s);
@@ -100,6 +100,7 @@ function setLang(lang) {
     html.dir = lang === 'ar' ? 'rtl' : 'ltr';
     applyStatic();
     renderAll();
+    story.remeasure?.();
     renderCart();
     if (S.step === 1) renderForm();
     if (S.step === 2 && !S.sent) renderReceipt(false);
@@ -210,6 +211,12 @@ function renderHeroMeta() {
   $('#statBranches').dataset.count = String(bs.length || 2);
   $('.stat__n[data-dec]').dataset.count = rating;
   $$('.stat__n').forEach((el) => { if (el.dataset.done) el.textContent = formatCount(el, 1); });
+
+  // Combo prices in the story
+  const combo = Number(st.combo_price || 1500);
+  $('#comboPrice').textContent = `+${money(combo)}`;
+  const smash = S.items.smash;
+  $('#comboCtaPrice').textContent = smash ? money(minPrice(smash) + combo) : '';
 
   // Announcement
   const ann = L(st, 'announcement');
@@ -660,7 +667,7 @@ let current = null; // { item, qty }
 
 const DRIPS_SVG = '<svg viewBox="0 0 300 120" preserveAspectRatio="none" aria-hidden="true"><path fill="currentColor" d="M0 0h300v22c-10 0-12 8-12 20s-5 30-12 30-11-22-11-32-4-14-12-14-10 6-10 16 2 54-12 54-12-40-12-54-5-16-14-16-10 5-10 14 0 24-11 24-10-16-10-24-4-12-12-12-13 6-13 18-1 40-12 40-12-28-12-40-4-16-13-16-11 8-11 18-3 14-11 14-9-8-9-16-5-12-13-12-12 4-12 12 0 30-12 30-12-22-12-30-4-14-12-14H0z"/></svg>';
 
-function openSheet(id, fromImg) {
+function openSheet(id, fromImg, opts = {}) {
   const item = S.items[id];
   if (!item) return;
   const cat = S.cats[item.category_id] || {};
@@ -710,6 +717,7 @@ function openSheet(id, fromImg) {
     <div class="si__sec"><h4>${esc(t('noteTitle'))}</h4>
       <textarea class="si__note" name="note" rows="1" maxlength="140" placeholder="${esc(t('notePh'))}"></textarea></div>`;
 
+  if (opts.combo) { const c = $('#sheetBody input[name="combo"]'); if (c) c.checked = true; }
   $('#sheetAdd').disabled = out;
   $('#sheetQtyVal').textContent = '1';
   $('#sheetTotal').dataset.v = '';
@@ -1381,42 +1389,274 @@ function setupEmbers() {
 
 function setupTilt() {
   if (reduced || !fine) return;
-  const hero = $('.hero');
-  const wrap = $('.hero__burgerwrap');
+  const pin = $('#storyPin');
+  const float = $('#sbFloat');
   const layers = [[$('.hero__ring'), 18], [$('.hero__glow'), 30]];
   let raf = 0, tx = 0, ty = 0;
-  hero.addEventListener('pointermove', (e) => {
-    const r = hero.getBoundingClientRect();
+  pin.addEventListener('pointermove', (e) => {
+    if (story.p > 0.02) return;
+    const r = pin.getBoundingClientRect();
     tx = (e.clientX - r.left) / r.width - 0.5;
     ty = (e.clientY - r.top) / r.height - 0.5;
     if (!raf) raf = requestAnimationFrame(() => {
       raf = 0;
-      wrap.style.setProperty('--ry', `${tx * 16}deg`);
-      wrap.style.setProperty('--rx', `${-ty * 12}deg`);
+      float.style.setProperty('--ry', `${tx * 16}deg`);
+      float.style.setProperty('--rx', `${-ty * 12}deg`);
       layers.forEach(([el, k]) => { el.style.translate = `${tx * k}px ${ty * k}px`; });
     });
   });
-  hero.addEventListener('pointerleave', () => {
-    wrap.style.setProperty('--ry', '0deg');
-    wrap.style.setProperty('--rx', '0deg');
+  pin.addEventListener('pointerleave', () => {
+    float.style.setProperty('--ry', '0deg');
+    float.style.setProperty('--rx', '0deg');
     layers.forEach(([el]) => { el.style.translate = ''; });
   });
+}
+
+/* ════════════════════════ the Smash story (pinned, scroll-scrubbed) ════════════════════════
+   0.00 hero → 0.10 zoom → 0.20 stack (explode + labels) → 0.48 slam → 0.56 SMASH! impact
+   → 0.66 combo box rises → 0.72 burger drops in → fries / drink / dip → 0.86 lid closes → CTA */
+const ASPECT = 1568 / 1237;
+// cut lines between the 5 layers, as [x%, y%] points across the burger photo
+const CUTS = [
+  [[0, 33], [20, 32], [45, 30], [65, 31], [80, 35], [92, 40], [100, 42]],
+  [[0, 47], [25, 48], [45, 50], [62, 52], [75, 58], [84, 61], [92, 54], [100, 50]],
+  [[0, 64], [25, 66], [50, 69], [75, 71], [100, 68]],
+  [[0, 79], [25, 81], [50, 85], [75, 87], [100, 88]],
+];
+const L_OFF = [-0.52, -0.25, 0, 0.23, 0.48];   // explode offsets (× burger height)
+const L_ROT = [-5, 4, -2, 3, -3];
+const L_MID = [0.16, 0.41, 0.58, 0.75, 0.92];   // where each layer's label points
+const CH_P = [0, 0.34, 0.575, 0.985];
+const story = { p: 0 };
+
+const easeIO = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+const easeOut = (t) => 1 - Math.pow(1 - t, 3);
+const easeIn = (t) => t * t * t;
+const easeBack = (t) => { const c = 1.6; return 1 + (c + 1) * Math.pow(t - 1, 3) + c * Math.pow(t - 1, 2); };
+const seg = (p, a, b) => clamp((p - a) / (b - a), 0, 1);
+const mix = (a, b, t) => a + (b - a) * t;
+const mixR = (a, b, t) => ({ x: mix(a.x, b.x, t), y: mix(a.y, b.y, t), w: mix(a.w, b.w, t) });
+
+function clipFor(i) {
+  const top = i === 0 ? [[0, 0], [100, 0]] : CUTS[i - 1];
+  // bottom edge overlaps the next layer by a hair so no seam shows when stacked
+  const bot = i === 4 ? [[0, 100], [100, 100]] : CUTS[i].map(([x, y]) => [x, y + 0.7]);
+  return `polygon(${[...top, ...[...bot].reverse()].map(([x, y]) => `${x}% ${y}%`).join(',')})`;
+}
+
+function setupStory() {
+  const sec = $('#top');
+  const pin = $('#storyPin');
+  const sb = $('#sb');
+  const layers = $$('.sb__l', sb);
+  const shadow = $('#sbShadow');
+  const copy = $('#storyCopy');
+  const slot = $('#heroSlot');
+  const slotDecor = $('#slotDecor');
+  const decor = $('#storyDecor');
+  const burst = $('#storyBurst');
+  const word = $('#stackWord');
+  const head = $('#stackHead');
+  const labels = $$('#sLabels li');
+  const impact = $('#impact');
+  const shake = $('#storyShake');
+  const comboHead = $('#comboHead');
+  const box = $('#box');
+  const boxSlot = $('#boxSlot');
+  const back = $('.box__back'), front = $('.box__front'), lid = $('#boxLid');
+  const fries = $('.box__fries'), cup = $('.box__cup'), dip = $('.box__dip');
+  const lidOut = $('.lid__out');
+  const cta = $('#comboCta');
+  const hint = $('#storyHint');
+  const bar = $('#storyBar');
+  const chapters = $$('#chapters [data-ch]');
+  layers.forEach((l, i) => { l.style.clipPath = clipFor(i); });
+
+  let M = null, lastP = 0, ticking = false, active = true;
+
+  const measure = () => {
+    const vw = pin.clientWidth, vh = pin.clientHeight;
+    const pr = pin.getBoundingClientRect();
+    const rel = (r) => ({ x: r.left - pr.left, y: r.top - pr.top, w: r.width, h: r.height });
+    const mobile = vw < 900;
+    const rtl = html.dir === 'rtl';
+    const navH = $('#nav').offsetHeight || 64;
+    const gutter = vw < 760 ? 16 : 28;
+    // hero: fit inside the slot (minus the decor padding)
+    const s = rel(slot.getBoundingClientRect());
+    const ins = mobile ? [0.06, 0.02, 0.1] : [0.1, 0.02, 0.12];
+    const iw = s.w * (1 - ins[1] * 2), ih = s.h * (1 - ins[0] - ins[2]);
+    const hw = Math.min(iw, ih * ASPECT);
+    const hero = { x: s.x + (s.w - hw) / 2, y: s.y + s.h * ins[0] + (ih - hw / ASPECT) / 2, w: hw };
+    // zoom: big and centred
+    const zw = Math.min(vw * (mobile ? 0.92 : 0.62), (vh - navH - 40) * 0.78 * ASPECT, 820);
+    const zoom = { x: (vw - zw) / 2, y: navH + (vh - navH - zw / ASPECT) / 2, w: zw };
+    // stack: leaves room for the explode (≈1.9× height) and the labels
+    const sw = Math.min(mobile ? vw * 0.54 : vw * 0.34, ((vh - navH - (mobile ? 150 : 190)) / 2.1) * ASPECT, 560);
+    const sx = mobile ? (rtl ? vw - gutter - sw : gutter) : (vw - sw) / 2;
+    const stack = { x: sx, y: navH + (mobile ? 88 : 110) + ((vh - navH - (mobile ? 88 : 110)) - sw / ASPECT) / 2, w: sw };
+    // impact: centred, medium
+    const iw2 = Math.min(vw * (mobile ? 0.8 : 0.42), (vh * 0.42) * ASPECT, 600);
+    const imp = { x: (vw - iw2) / 2, y: (vh - iw2 / ASPECT) / 2 - vh * 0.02, w: iw2 };
+    // box: the slot inside the combo box (box parts are only translated, the slot is not)
+    const b = rel(boxSlot.getBoundingClientRect());
+    const inBox = { x: b.x, y: b.y, w: b.w };
+    const base = Math.ceil(Math.max(hero.w, zoom.w, stack.w, imp.w, inBox.w));
+    sb.style.width = `${base}px`;
+    const lw = mobile ? Math.max(110, (rtl ? sx - gutter : vw - (sx + sw) - gutter) - 14) : clamp(vw * 0.2, 190, 300);
+    pin.style.setProperty('--lw', `${lw}px`);
+    M = { vw, vh, mobile, rtl, hero, zoom, stack, imp, inBox, base, lw, gutter, boxH: box.offsetHeight };
+  };
+
+  const render = () => {
+    ticking = false;
+    if (!M) measure();
+    const r0 = sec.getBoundingClientRect();
+    const span = Math.max(1, sec.offsetHeight - pin.clientHeight);
+    const p = reduced ? 0 : clamp(-r0.top / span, 0, 1);
+    story.p = p;
+    sec.classList.toggle('is-moving', p > 0.004);
+
+    // ── actor path
+    const tA = easeIO(seg(p, 0, 0.1)), tB = easeIO(seg(p, 0.1, 0.2));
+    const tI = easeIO(seg(p, 0.5, 0.57)), tC = easeIO(seg(p, 0.71, 0.8));
+    let r = mixR(M.hero, M.zoom, tA);
+    r = mixR(r, M.stack, tB);
+    r = mixR(r, M.imp, tI);
+    r = mixR(r, M.inBox, tC);
+    const s = r.w / M.base;
+    sb.style.transform = `translate3d(${r.x.toFixed(2)}px, ${r.y.toFixed(2)}px, 0) scale(${s.toFixed(4)})`;
+    const H0 = M.base / ASPECT;
+    const explode = easeOut(seg(p, 0.17, 0.36)) * (1 - easeIn(seg(p, 0.47, 0.555)));
+    layers.forEach((l, i) => {
+      l.style.transform = explode ? `translate3d(0, ${(L_OFF[i] * explode * H0).toFixed(2)}px, 0) rotate(${(L_ROT[i] * explode).toFixed(2)}deg)` : '';
+    });
+    shadow.style.opacity = String((1 - seg(p, 0.02, 0.12)) + 0.8 * seg(p, 0.57, 0.6) * (1 - seg(p, 0.68, 0.72)));
+
+    // ── hero layer fades out
+    const fade = seg(p, 0, 0.07);
+    copy.style.opacity = String(1 - fade);
+    copy.style.transform = fade ? `translateY(${-70 * easeIn(fade)}px)` : '';
+    copy.style.visibility = fade >= 1 ? 'hidden' : '';
+    slotDecor.style.opacity = String(1 - seg(p, 0, 0.05));
+    decor.style.opacity = String(1 - seg(p, 0.03, 0.12));
+    hint.style.opacity = String(1 - seg(p, 0, 0.03));
+
+    // ── yellow burst from the burger's centre
+    const cx = r.x + r.w / 2, cy = r.y + r.w / ASPECT / 2;
+    const maxR = Math.hypot(Math.max(cx, M.vw - cx), Math.max(cy, M.vh - cy)) + 20;
+    const rad = maxR * easeIO(seg(p, 0.07, 0.17)) * (1 - easeIO(seg(p, 0.63, 0.71)));
+    burst.style.clipPath = `circle(${rad.toFixed(1)}px at ${cx.toFixed(1)}px ${cy.toFixed(1)}px)`;
+    const brandDark = rad > maxR * 0.5;
+    $('#nav').classList.toggle('on-yellow', brandDark);
+
+    // ── chapter 2: the stack
+    const stackIn = seg(p, 0.17, 0.24) * (1 - seg(p, 0.46, 0.5));
+    head.style.opacity = String(stackIn);
+    head.style.transform = `translateY(${(1 - stackIn) * 24}px)`;
+    word.style.opacity = String(seg(p, 0.15, 0.24) * (1 - seg(p, 0.48, 0.53)));
+    word.style.transform = `translateX(${(-p * 0.9 * M.vw).toFixed(1)}px)`;
+    labels.forEach((li, i) => {
+      const t = seg(p, 0.23 + i * 0.03, 0.27 + i * 0.03) * (1 - seg(p, 0.45, 0.48));
+      const side = M.mobile ? (M.rtl ? 'l' : 'r') : (i % 2 ? 'l' : 'r');
+      if (li.dataset.side !== side) li.dataset.side = side;
+      const ay = r.y + s * (L_MID[i] * H0 + L_OFF[i] * explode * H0);
+      const ax = side === 'r' ? r.x + r.w + 10 : r.x - 10 - M.lw;
+      const slide = (1 - easeOut(t)) * (side === 'r' ? 30 : -30);
+      li.style.opacity = String(t);
+      li.style.transform = `translate3d(${(ax + slide).toFixed(1)}px, ${(ay - 15).toFixed(1)}px, 0)`;
+    });
+
+    // ── chapter 3: SMASH!
+    const imp = seg(p, 0.55, 0.565) * (1 - seg(p, 0.64, 0.68));
+    impact.style.opacity = String(imp);
+    impact.style.setProperty('--cx', `${cx.toFixed(0)}px`);
+    impact.style.setProperty('--cy', `${cy.toFixed(0)}px`);
+    if (lastP < 0.56 && p >= 0.56) {
+      for (const el of [impact, shake]) { el.classList.remove('go'); void el.offsetWidth; el.classList.add('go'); }
+      vibrate([25, 30, 15]);
+      if (!reduced) sparks(cx, cy + (r.w / ASPECT) * 0.35);
+    }
+
+    // ── chapter 4: combo box
+    const rise = 1 - easeOut(seg(p, 0.65, 0.73));
+    const riseY = (rise * (M.vh * 0.9)).toFixed(1);
+    back.style.transform = `translate3d(0, ${riseY}px, 0)`;
+    front.style.transform = `translate3d(0, ${riseY}px, 0)`;
+    comboHead.style.opacity = String(seg(p, 0.67, 0.73));
+    comboHead.style.transform = `translateY(${(1 - seg(p, 0.67, 0.73)) * 30}px)`;
+    const drop = (el, a, b, rot) => {
+      const t = seg(p, a, b);
+      const y = (1 - easeBack(t)) * -M.vh;
+      el.style.transform = `translate3d(0, ${y.toFixed(1)}px, 0) rotate(${((1 - t) * rot).toFixed(1)}deg)`;
+    };
+    drop(fries, 0.77, 0.82, -24);
+    drop(cup, 0.795, 0.845, 18);
+    drop(dip, 0.815, 0.86, -14);
+    const close = seg(p, 0.86, 0.94);
+    const ang = -112 + 112 * (close < 1 ? easeIO(close) : 1);
+    lid.style.transform = `translate3d(0, ${riseY}px, 0) perspective(1400px) rotateX(${ang.toFixed(2)}deg)`;
+    lidOut.style.setProperty('--shine', `${(-120 + 240 * seg(p, 0.93, 0.99)).toFixed(0)}%`);
+    if (lastP < 0.935 && p >= 0.935) { vibrate(18); box.animate([{ transform: 'translateY(0)' }, { transform: 'translateY(6px) scaleY(.985)' }, { transform: 'none' }], { duration: 320, easing: 'ease-out' }); }
+    const ctaT = seg(p, 0.93, 0.97);
+    cta.style.opacity = String(ctaT);
+    cta.style.transform = `translateY(${(1 - ctaT) * 20}px)`;
+    cta.classList.toggle('on', ctaT > 0.5);
+
+    // ── progress UI
+    bar.style.transform = `scaleX(${p.toFixed(4)})`;
+    const ch = p < 0.14 ? 0 : p < 0.5 ? 1 : p < 0.64 ? 2 : 3;
+    chapters.forEach((c, i) => c.classList.toggle('on', i === ch));
+    lastP = p;
+  };
+
+  const kick = () => { if (!ticking && active) { ticking = true; requestAnimationFrame(render); } };
+  if (reduced) sec.classList.add('is-static');
+  new IntersectionObserver(([e]) => { active = e.isIntersecting; if (active) kick(); }, { rootMargin: '200px 0px' }).observe(sec);
+  addEventListener('scroll', kick, { passive: true });
+  let rt;
+  addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { M = null; kick(); }, 120); }, { passive: true });
+  document.fonts?.ready.then(() => { M = null; kick(); });
+  addEventListener('load', () => { M = null; kick(); }, { once: true });
+  story.remeasure = () => { M = null; kick(); };
+  measure();
+  render();
+  sb.classList.add('is-ready');
+
+  chapters.forEach((c) => c.addEventListener('click', () => {
+    const span = sec.offsetHeight - pin.clientHeight;
+    const top = sec.getBoundingClientRect().top + scrollY;
+    scrollTo({ top: top + span * CH_P[Number(c.dataset.ch)], behavior: reduced ? 'auto' : 'smooth' });
+  }));
+}
+
+// grease sparks flying off the griddle at the SMASH moment
+function sparks(x, y) {
+  const colors = ['#ffd400', '#ffb703', '#ff7a00', '#fff2b8'];
+  for (let i = 0; i < 26; i++) {
+    const el = document.createElement('i');
+    el.className = 'confetti';
+    const sz = 3 + Math.random() * 6;
+    el.style.cssText = `width:${sz}px;height:${sz}px;border-radius:50%;background:${colors[i % colors.length]};left:${x}px;top:${y}px;box-shadow:0 0 8px ${colors[i % colors.length]}`;
+    topLayer(el);
+    const ang = Math.PI + Math.random() * Math.PI, dist = 80 + Math.random() * 220;
+    const dx = Math.cos(ang) * dist * (Math.random() > 0.5 ? 1 : -1), dy = Math.sin(ang) * dist * 0.7;
+    el.animate([
+      { transform: 'translate(-50%, -50%) scale(1)', opacity: 1 },
+      { transform: `translate(${dx}px, ${dy}px) scale(.8)`, opacity: 1, offset: 0.6 },
+      { transform: `translate(${dx * 1.15}px, ${dy + 140}px) scale(.3)`, opacity: 0 },
+    ], { duration: 700 + Math.random() * 500, easing: 'cubic-bezier(.2,.7,.3,1)' }).onfinish = () => el.remove();
+  }
 }
 
 /* ════════════════════════ scroll-driven bits ════════════════════════ */
 function setupScroll() {
   const nav = $('#nav');
   const menubar = $('#menubar');
-  const ana = $('#anatomy');
-  const anaSticky = $('.anatomy__sticky');
-  const anaBurger = $('.anatomy__burger');
-  const labels = $$('.al');
-  const anaEnd = $('.anatomy__end');
   const finale = $('#finaleBig');
-  let lastY = scrollY, ticking = false, anaOn = false, finOn = false, slammed = false;
+  let lastY = scrollY, ticking = false, finOn = false;
 
   const kick = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
-  new IntersectionObserver(([e]) => { anaOn = e.isIntersecting; kick(); }, { rootMargin: '100px' }).observe(ana);
   new IntersectionObserver(([e]) => { finOn = e.isIntersecting; kick(); }).observe(finale);
 
   const update = () => {
@@ -1432,16 +1672,6 @@ function setupScroll() {
     lastY = y;
     menubar.classList.toggle('is-stuck', menubar.getBoundingClientRect().top <= (nav.classList.contains('is-hidden') ? 1 : nav.offsetHeight + 1));
     updateDock();
-
-    if (anaOn && !reduced) {
-      const r = ana.getBoundingClientRect();
-      const p = clamp(-r.top / Math.max(1, r.height - innerHeight), 0, 1);
-      anaSticky.style.setProperty('--p', p.toFixed(4));
-      labels.forEach((l, i) => l.classList.toggle('on', p > 0.1 + i * 0.08 && p < 0.8));
-      anaEnd.classList.toggle('on', p > 0.9);
-      if (p > 0.97 && !slammed) { slammed = true; anaBurger.classList.remove('slam'); void anaBurger.offsetWidth; anaBurger.classList.add('slam'); vibrate(15); }
-      if (p < 0.9) slammed = false;
-    }
     if (finOn) {
       const r = finale.getBoundingClientRect();
       const p = clamp((innerHeight - r.top) / (innerHeight * 0.75), 0, 1);
@@ -1454,8 +1684,9 @@ function setupScroll() {
 
 function updateDock() {
   const dock = $('#dock');
-  const heroH = $('.hero').offsetHeight;
-  const show = cartCount() > 0 || scrollY > heroH * 0.7;
+  const sec = $('#top');
+  const storyEnd = sec.offsetTop + sec.offsetHeight - innerHeight * 0.6;
+  const show = cartCount() > 0 ? scrollY < 40 || scrollY > storyEnd || story.p < 0.04 : scrollY > storyEnd;
   dock.classList.toggle('is-on', show && !html.classList.contains('lock'));
 }
 
@@ -1525,6 +1756,8 @@ document.addEventListener('click', (e) => {
   }
   const ob = e.target.closest('[data-order-branch]');
   if (ob) { selectBranch(ob.dataset.orderBranch); $('#menu').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' }); return; }
+  const oc = e.target.closest('[data-open-combo]');
+  if (oc) { openSheet(oc.dataset.openCombo, $('#sb img'), { combo: true }); return; }
   if (e.target.closest('[data-open-cart]')) openCart();
 });
 
@@ -1572,6 +1805,7 @@ function setupPausing() {
 if (S.lang !== 'ar') applyStatic();
 try { $('#toasts').setAttribute('popover', 'manual'); $('#toasts').showPopover?.(); } catch { /* ignore */ }
 setupPausing();
+setupStory();
 setupScroll();
 setupCounters();
 setupEmbers();
