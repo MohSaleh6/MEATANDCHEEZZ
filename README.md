@@ -26,7 +26,7 @@ It replaces the link-in-bio page and the 5–7 page PDF menu. Customers browse t
 - The brand is written as **MEAT AND CHEEZZ** everywhere, in both languages, with no Arabic transliteration.
 - **Logo**: the shop-sign logo (white lettering between yellow capsule bars) is redrawn as a pure vector, so it needs no font and stays sharp at any size. `public/img/logo.svg` is the standalone file; the page uses an inline `<symbol id="logo">` whose colours come from `--logo-fg` / `--logo-bar`, so it turns black over the yellow scroll scene. It appears in the header, hero, combo box, footer, admin, 404, favicon, app icons and share image.
 - **Toasts**: dark cards that drop in under the header, showing the item photo and a countdown bar when something is added to the cart.
-- **Scroll motion**: the header logo and icons lean slightly with scroll speed and settle back (one CSS variable, only while scrolling). Icons on cards pop in once as their card appears.
+- **Scroll motion**: the header logo and icons lean slightly with scroll speed and settle back (one CSS variable, only while scrolling). Icons on cards pop in once as their card appears. Menu cards that appear together come in as a short wave (70 ms apart), and each card's photo rises in just after its card.
 - **Fits any screen height**: the hero logo (and the burger photo on phones) is sized from the screen height. The combo box is measured to fit between the price and the buttons, so nothing overlaps on iPad landscape or short iPhones.
 - **Opening scroll story (pinned, scroll-scrubbed), starring the Smash Burger**. The photo is AI-upscaled ×4 from the PDF and cut into 5 real layers:
   1. **Hero**: the burger on a yellow slab, the Google badge, "MEAT AND CHEEZZ" with a cheese drip, and two clear buttons: **Order now** and **Our branches**.
@@ -40,7 +40,7 @@ It replaces the link-in-bio page and the 5–7 page PDF menu. Customers browse t
 **Ordering**
 - **Menu**: a sticky category bar with a sliding indicator, scroll-spy and smooth scrolling. Search understands Arabic spelling variants (أ/ا, ة/ه…); press `/` on desktop to jump to it.
 - **Item sheet** (bottom sheet on mobile, drag down to dismiss):
-  - The photo flies from the card into the sheet.
+  - The photo rises into place inside the sheet (it stays clipped to its own area, so nothing floats over the sheet).
   - Weight picker (100/150/200/300 g, or 120…320 g for the heavy burgers) with a **patty that grows** as you pick a bigger size.
   - Rolling odometer price.
   - **Make it a combo** (+1.50).

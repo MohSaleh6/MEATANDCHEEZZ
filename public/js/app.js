@@ -1,6 +1,6 @@
 // Meat & Cheezz — customer site
 // Vanilla JS, no dependencies. Arabic-first, RTL-aware.
-import { DICT, QUOTES } from './i18n.js?v=a5b0e4f95a';
+import { DICT, QUOTES } from './i18n.js?v=2d4fc1afd3';
 
 /* ════════════════════════ utilities ════════════════════════ */
 const $ = (s, r = document) => r.querySelector(s);
@@ -454,7 +454,14 @@ let revealer;
 function observeReveals() {
   if (reduced || !('IntersectionObserver' in window)) { $$('.reveal').forEach((el) => el.classList.add('in')); return; }
   revealer ||= new IntersectionObserver((entries) => {
-    for (const e of entries) if (e.isIntersecting) { e.target.classList.add('in'); revealer.unobserve(e.target); }
+    // cards that appear together come in as a short wave
+    let n = 0;
+    for (const e of entries) {
+      if (!e.isIntersecting) continue;
+      e.target.style.setProperty('--rd', `${Math.min(n++, 5) * 70}ms`);
+      e.target.classList.add('in');
+      revealer.unobserve(e.target);
+    }
   }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
   $$('.reveal:not(.in)').forEach((el) => revealer.observe(el));
 }
@@ -678,26 +685,13 @@ function openSheet(id, fromImg, opts = {}) {
   openDialog(sheet);
   $('#sheetBody').scrollTop = 0;
 
-  // shared-element flight from the card image into the sheet
+  // the photo rises into place inside the sheet (stays clipped to its own area)
   const target = $('#sheetImg');
-  if (fromImg && target && !reduced) {
-    const a = fromImg.getBoundingClientRect();
-    target.style.opacity = '0';
-    raf2(() => {
-      const b2 = target.getBoundingClientRect();
-      if (!a.width || !b2.width) { target.style.opacity = ''; return; }
-      const clone = new Image();
-      clone.src = fromImg.currentSrc || fromImg.src;
-      clone.className = 'flyer';
-      clone.style.width = `${b2.width}px`;
-      clone.style.height = `${b2.height}px`;
-      topLayer(clone);
-      const s = a.width / b2.width;
-      clone.animate([
-        { transform: `translate(${a.left}px, ${a.top}px) scale(${s})`, transformOrigin: '0 0' },
-        { transform: `translate(${b2.left}px, ${b2.top}px) scale(1)`, transformOrigin: '0 0' },
-      ], { duration: 520, easing: 'cubic-bezier(.16,1,.3,1)' }).onfinish = () => { target.style.opacity = ''; clone.remove(); };
-    });
+  if (target && !reduced) {
+    target.animate([
+      { transform: 'translateY(26px) scale(.86)', opacity: 0 },
+      { transform: 'none', opacity: 1 },
+    ], { duration: 520, delay: 90, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'backwards' });
   }
 }
 
