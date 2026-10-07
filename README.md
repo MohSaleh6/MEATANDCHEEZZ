@@ -24,6 +24,8 @@ It replaces the link-in-bio page and the 5–7 page PDF menu. Customers browse t
 
 **Brand & motion** (kept deliberately simple so it stays smooth on iPhone/iPad Safari)
 - The brand is written as **MEAT AND CHEEZZ** everywhere, in both languages, with no Arabic transliteration.
+- **Logo**: the shop-sign logo (white lettering between yellow capsule bars) is redrawn as a pure vector, so it needs no font and stays sharp at any size. `public/img/logo.svg` is the standalone file; the page uses an inline `<symbol id="logo">` whose colours come from `--logo-fg` / `--logo-bar`, so it turns black over the yellow scroll scene. It appears in the header, hero, combo box, footer, admin, 404, favicon, app icons and share image.
+- **Toasts**: dark cards that drop in under the header, showing the item photo and a countdown bar when something is added to the cart.
 - **Opening scroll story (pinned, scroll-scrubbed), starring the Smash Burger**. The photo is AI-upscaled ×4 from the PDF and cut into 5 real layers:
   1. **Hero**: the burger on a yellow slab, the Google badge, "MEAT AND CHEEZZ" with a cheese drip, and two clear buttons: **Order now** and **Our branches**.
   2. **The stack**: on scroll the burger moves to the centre and splits into its layers, each with a short label.

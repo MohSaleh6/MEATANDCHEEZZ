@@ -1,6 +1,6 @@
 // Meat & Cheezz — customer site
 // Vanilla JS, no dependencies. Arabic-first, RTL-aware.
-import { DICT, QUOTES } from './i18n.js?v=3e71dfa9a2';
+import { DICT, QUOTES } from './i18n.js?v=911b3cc597';
 
 /* ════════════════════════ utilities ════════════════════════ */
 const $ = (s, r = document) => r.querySelector(s);
@@ -474,15 +474,18 @@ function odo(el, text) {
 }
 
 /* ════════════════════════ toasts ════════════════════════ */
-function toast(msg, ic = 'check') {
+function toast(msg, ic = 'check', opts = {}) {
   const el = document.createElement('div');
-  el.className = 'toast';
-  el.innerHTML = `${icon(ic)}<span>${esc(msg)}</span>`;
+  el.className = `toast${ic === 'check' ? '' : ' toast--info'}`;
+  const lead = opts.img
+    ? `<span class="toast__img"><img src="${esc(opts.img)}" alt="" width="44" height="36"></span>`
+    : `<span class="toast__ic">${icon(ic)}</span>`;
+  el.innerHTML = `${lead}<span class="toast__txt"><b>${esc(msg)}</b>${opts.sub ? `<small>${esc(opts.sub)}</small>` : ''}</span>${opts.img ? `<span class="toast__ok">${icon('check')}</span>` : ''}<i class="toast__bar"></i>`;
   const box = $('#toasts');
   box.append(el);
   if (box.showPopover) { try { if (box.matches(':popover-open')) box.hidePopover(); box.showPopover(); } catch { /* ignore */ } }
-  setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 400); }, 2200);
-  while ($('#toasts').children.length > 3) $('#toasts').firstElementChild.remove();
+  setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 400); }, 2400);
+  while (box.children.length > 3) box.firstElementChild.remove();
 }
 
 /* ════════════════════════ dialogs ════════════════════════ */
@@ -728,7 +731,7 @@ $('#sheetAdd').addEventListener('click', () => {
   const src = current.item.image ? smImg(current.item.image) : '';
   const rect = img || $('#sheetAdd');
   fly(rect, src);
-  toast(`${t('added')} · ${L(current.item, 'name')}`);
+  toast(t('added'), 'check', { img: src, sub: L(current.item, 'name') });
   closeDialog(sheet);
   current = null;
 });
@@ -765,8 +768,9 @@ function quickAdd(id, sizeId, fromEl) {
   if (!item || isOut(item)) return;
   addLine({ id, size: sizeId || item.sizes[0].id, qty: 1, combo: false, addons: [], note: '' });
   const img = fromEl?.closest('.card, .up')?.querySelector('img');
-  fly(img || fromEl, item.image ? smImg(item.image) : '');
-  toast(`${t('added')} · ${L(item, 'name')}`);
+  const src = item.image ? smImg(item.image) : '';
+  fly(img || fromEl, src);
+  toast(t('added'), 'check', { img: src, sub: L(item, 'name') });
 }
 
 /* ════════════════════════ cart drawer ════════════════════════ */
@@ -1056,7 +1060,7 @@ function buildMessage(o) {
   const ar = S.lang === 'ar';
   const sep = '━━━━━━━━━━━━━━';
   const rows = [];
-  rows.push(ar ? '🍔 *طلب جديد — Meat & Cheezz*' : '🍔 *New order — Meat & Cheezz*');
+  rows.push(ar ? '🍔 *طلب جديد — MEAT AND CHEEZZ*' : '🍔 *New order — MEAT AND CHEEZZ*');
   rows.push(`${ar ? 'رقم الطلب' : 'Order no.'}: *${o.id}*`);
   rows.push(`${ar ? 'الفرع' : 'Branch'}: ${L(o.branch, 'name')}`);
   rows.push(`${ar ? 'النوع' : 'Type'}: ${o.mode === 'delivery' ? `${t('delivery')} 🛵` : `${t('pickup')} 🏪`}`);

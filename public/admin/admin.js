@@ -86,7 +86,7 @@ function applyLang() {
   html.lang = S.lang;
   html.dir = S.lang === 'ar' ? 'rtl' : 'ltr';
   $$('[data-t]').forEach((el) => { el.textContent = t(el.dataset.t); });
-  document.title = `${t('dashboard')} — Meat & Cheezz`;
+  document.title = `${t('dashboard')} — MEAT AND CHEEZZ`;
 }
 
 function toast(msg, err = false) {
